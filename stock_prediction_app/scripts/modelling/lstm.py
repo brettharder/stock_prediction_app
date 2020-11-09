@@ -219,8 +219,6 @@ fig.update_layout(
 
 )
 
-
-
 annotations = []
 annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                               xanchor='left', yanchor='bottom',
@@ -355,9 +353,3 @@ annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
 fig.update_layout(annotations=annotations)
 
 fig.show()
-
-import chart_studio.plotly as py
-import chart_studio
-
-#chart_studio.tools.set_credentials_file(username='rodolfo_saldanha', api_key='zWJIVWJs23wfiAp516Mh')
-py.plot(fig, filename='stock_prediction_lstm')
