@@ -228,7 +228,6 @@ annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                                         color='white'),
                               showarrow=False))
 fig.update_layout(annotations=annotations)
-
 fig.show()
 
 # ------------
@@ -345,7 +344,7 @@ fig.update_layout(
 annotations = []
 annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                               xanchor='left', yanchor='bottom',
-                              text='Results (LSTM)',
+                              text='Results (GRU)',
                               font=dict(family='Rockwell',
                                         size=26,
                                         color='white'),

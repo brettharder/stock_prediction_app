@@ -1,0 +1,31 @@
+{% extends 'index.html'%}
+
+{% block content %}
+   
+<div class='inputDiv' id="dataInputDiv">
+
+    <h1>
+        Stock Prediction App 
+    </h1>
+
+    <h2>
+        Select Stonks:
+    </h2>
+    <form class="stockLoader" name="stockLoader" id="stockLoader" enctype="multipart/form-data">
+        <label for="stock">Enter stonk name:</label>
+        <input type="text" id="stockInput" name="stockInput">
+        <button id="uploadStockBtn" type="button" onclick="return loadStock(event)">Predict</button>
+      </form>
+      <!--<progress></progress>-->
+
+  </div>
+
+  
+<div class='inputDiv'>
+  <h2>
+    Result:
+</h2>
+<div id="tester" style="width:600px;height:250px;"></div>
+</div>
+
+{% endblock %}
