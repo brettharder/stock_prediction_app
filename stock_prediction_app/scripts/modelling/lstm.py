@@ -216,7 +216,6 @@ fig.update_layout(
     ),
     showlegend=True,
     template = 'plotly_dark'
-
 )
 
 annotations = []
