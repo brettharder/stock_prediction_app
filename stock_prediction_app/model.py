@@ -153,60 +153,12 @@ def main(ticker,lookback=20,num_epochs=100):
     predictions = np.append(predictions, original, axis=1)
     result = pd.DataFrame(predictions)
 
-    # Plot 
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(go.Scatter(x=result.index, y=result[0],
-                        mode='lines',
-                        name='Train prediction')))
-    fig.add_trace(go.Scatter(x=result.index, y=result[1],
-                        mode='lines',
-                        name='Test prediction'))
-    fig.add_trace(go.Scatter(go.Scatter(x=result.index, y=result[2],
-                        mode='lines',
-                        name='Actual Value')))
-    fig.update_layout(
-        xaxis=dict(
-            showline=True,
-            showgrid=True,
-            showticklabels=False,
-            linecolor='white',
-            linewidth=2
-        ),
-        yaxis=dict(
-            title_text='Close (USD)',
-            titlefont=dict(
-                family='Rockwell',
-                size=12,
-                color='white',
-            ),
-            showline=True,
-            showgrid=True,
-            showticklabels=True,
-            linecolor='white',
-            linewidth=2,
-            ticks='outside',
-            tickfont=dict(
-                family='Rockwell',
-                size=12,
-                color='white',
-            ),
-        ),
-        showlegend=True,
-        template = 'plotly_dark'
-
-    )
-
-    annotations = []
-    annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
-                                xanchor='left', yanchor='bottom',
-                                text='Results (LSTM)',
-                                font=dict(family='Rockwell',
-                                            size=26,
-                                            color='white'),
-                                showarrow=False))
-    fig.update_layout(annotations=annotations)
-
-    return fig
+    d_out = {}
+    d_out['train'] = {'x': data['Date'],'y': result[0]}
+    d_out['test'] = {'x': data['Date'],'y': result[1]}
+    d_out['actual'] = {'x': data['Date'],'y': result[2]}
+        
+    return d_out
 
 # Example to run 
-#myFig = main("BTC-USD")
+# data = main("BTC-USD")
