@@ -209,4 +209,4 @@ def main(ticker,lookback=20,num_epochs=100):
     return fig
 
 # Example to run 
-myFig = main("BTC-USD")
+#myFig = main("BTC-USD")
