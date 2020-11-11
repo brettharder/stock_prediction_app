@@ -8,7 +8,6 @@ application = Flask(__name__, static_folder='static')
 
 @application.route('/', methods=['GET','POST'])
 def homepage(): 
-    imageUpload()
     return render_template('app.html')
 
 
