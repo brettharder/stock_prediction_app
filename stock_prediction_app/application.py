@@ -2,14 +2,13 @@ from flask import Flask, render_template,request, jsonify
 import pandas as pd
 import numpy as np
 import os
-
+from model import main
 
 application = Flask(__name__, static_folder='static')
 
-
-
 @application.route('/', methods=['GET','POST'])
 def homepage(): 
+    imageUpload()
     return render_template('app.html')
 
 
@@ -35,7 +34,6 @@ def trainModel():
         stockName=request.args.get('stockName')
     return jsonify(content)
     #return render_template('app.html',data=content)
-
 
 
 
