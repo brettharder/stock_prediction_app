@@ -2,7 +2,7 @@ from flask import Flask, render_template,request, jsonify
 import pandas as pd
 import numpy as np
 import os
-from model import main
+import model
 
 application = Flask(__name__, static_folder='static')
 
@@ -18,7 +18,11 @@ def getStock():
         print(request.args)
         stockName=request.args.get('stockName')
         #Check to see if this stockname is legit
-        content['stockName']=stockName
+        shortStockName=model.confirmStock(stockName)
+        if(pd.notnull(shortStockName)):
+            content['stockName']=shortStockName
+        else:
+            content['stockName']=False
     return jsonify(content)
 
 
@@ -29,10 +33,17 @@ def trainModel():
     # Then return data with json....
     content={}
     if(request.method=="GET"):
-        print(request.args)
+        #print(request.args)
         stockName=request.args.get('stockName')
+        returnData=model.main(stockName)
+        #print(returnData) 
+        #content=returnData
+        plotlyDiv=model.plotThis(returnData['train']['x'],returnData['train']['y'],
+            returnData['test']['x'],returnData['test']['y'],
+            returnData['actual']['x'],returnData['actual']['y']
+        )       
+        content['plotDiv']=plotlyDiv
     return jsonify(content)
-    #return render_template('app.html',data=content)
 
 
 
