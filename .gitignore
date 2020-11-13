@@ -2,3 +2,4 @@
 env
 4.2.0
 *.pyc
+stock_prediction_app/__pycache__

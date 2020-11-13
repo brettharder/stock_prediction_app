@@ -19,11 +19,24 @@ import math
 from sklearn.metrics import mean_squared_error
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly
 os.getcwd()
 
 # ----------------
 # Helper functions
 # ----------------
+
+#Function to return if stock name is valid and return the short name of it
+def confirmStock(stockName):
+      stock=yf.Ticker(stockName)
+      returnName=np.nan
+      try:
+            returnName=stock.info['shortName']
+      except:
+            pass
+      return returnName
+
+
 def get_stock_history(ticker,history='max'):
     data = yf.Ticker(ticker).history(period=history)
     
@@ -98,9 +111,12 @@ def main(ticker,lookback=20,num_epochs=100):
 
     price = data[['Close']]
     scaler = MinMaxScaler(feature_range=(-1, 1))
-    price['Close'] = scaler.fit_transform(price['Close'].values.reshape(-1,1))
+    #price['Close'] = scaler.fit_transform(price['Close'].values.reshape(-1,1))
+    vals=scaler.fit_transform(price['Close'].values.reshape(-1,1))
+    price2=pd.DataFrame()
+    price2['Close']=vals.reshape(-1)
 
-    x_train, y_train, x_test, y_test = split_data(price, lookback)
+    x_train, y_train, x_test, y_test = split_data(price2, lookback)
 
     model = LSTM()
     criterion = torch.nn.MSELoss(reduction='mean')
@@ -138,27 +154,87 @@ def main(ticker,lookback=20,num_epochs=100):
     lstm.append(training_time)
 
     # shift train predictions for plotting
-    trainPredictPlot = np.empty_like(price)
+    trainPredictPlot = np.empty_like(price2)
     trainPredictPlot[:, :] = np.nan
     trainPredictPlot[lookback:len(y_train_pred)+lookback, :] = y_train_pred
 
     # shift test predictions for plotting
-    testPredictPlot = np.empty_like(price)
+    testPredictPlot = np.empty_like(price2)
     testPredictPlot[:, :] = np.nan
-    testPredictPlot[len(y_train_pred)+lookback-1:len(price)-1, :] = y_test_pred
+    testPredictPlot[len(y_train_pred)+lookback-1:len(price2)-1, :] = y_test_pred
 
-    original = scaler.inverse_transform(price['Close'].values.reshape(-1,1))
+    original = scaler.inverse_transform(price2['Close'].values.reshape(-1,1))
 
     predictions = np.append(trainPredictPlot, testPredictPlot, axis=1)
     predictions = np.append(predictions, original, axis=1)
     result = pd.DataFrame(predictions)
 
     d_out = {}
-    d_out['train'] = {'x': data['Date'],'y': result[0]}
-    d_out['test'] = {'x': data['Date'],'y': result[1]}
-    d_out['actual'] = {'x': data['Date'],'y': result[2]}
+    d_out['train'] = {'x': list(data['Date'].dt.date.astype(str).values),'y': list(result[0].values)}
+    d_out['test'] = {'x': list(data['Date'].dt.date.astype(str).values),'y': list(result[1].values)}
+    d_out['actual'] = {'x': list(data['Date'].dt.date.astype(str).values),'y': list(result[2].values)}
         
     return d_out
 
+def plotThis(trainX,trainY,testX,testY,actualX,actualY):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(go.Scatter(x=trainX, y=trainY,
+                        mode='lines',
+                        name='Train prediction')))
+    fig.add_trace(go.Scatter(x=testX, y=testY,
+                        mode='lines',
+                        name='Test prediction'))
+    fig.add_trace(go.Scatter(go.Scatter(x=actualX, y=actualY,
+                        mode='lines',
+                        name='Actual Value')))
+    fig.update_layout(
+        xaxis=dict(
+            showline=True,
+            showgrid=True,
+            showticklabels=False,
+            linecolor='white',
+            linewidth=2
+        ),
+        yaxis=dict(
+            title_text='Close (USD)',
+            titlefont=dict(
+                family='Rockwell',
+                size=12,
+                color='white',
+            ),
+            showline=True,
+            showgrid=True,
+            showticklabels=True,
+            linecolor='white',
+            linewidth=2,
+            ticks='outside',
+            tickfont=dict(
+                family='Rockwell',
+                size=12,
+                color='white',
+            ),
+        ),
+        showlegend=True,
+        template = 'plotly_dark'
+    )
+
+    annotations = []
+    annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
+                                xanchor='left', yanchor='bottom',
+                                text='Results (LSTM)',
+                                font=dict(family='Rockwell',
+                                            size=26,
+                                            color='white'),
+                                showarrow=False))
+    fig.update_layout(annotations=annotations)
+    #fig.show()
+    plotlyDiv=plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
+    return plotlyDiv
+
+
+
+
+
+
 # Example to run 
-# data = main("BTC-USD")
+#data = main("BTC-USD")

@@ -1,14 +1,30 @@
 import yfinance as yf
+import numpy as np
 
 msft = yf.Ticker("MSFT")
 print(msft)
 msft.info
+msft.info['shortName']
+
+testThis=yf.Ticker('bobs burgers')
+testThis.info
+
+def confirmStock(stockName):
+      stock=yf.Ticker(stockName)
+      returnName=np.nan
+      try:
+            returnName=stock.info['shortName']
+      except:
+            pass
+      return returnName
+confirmStock('CL=F')
+
 
 data = msft.history(period="max")
 msft.sustainability
 
 bitcoin = yf.Ticker("BTC-USD")
-bitcoin.info
+bitcoin.info['name']
 
 old = bitcoin.history(period='max')
 old
