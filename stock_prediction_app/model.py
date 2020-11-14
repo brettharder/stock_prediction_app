@@ -95,10 +95,28 @@ class LSTM(nn.Module):
         out = self.fc(out[:, -1, :]) 
         return out
 
+# ---------------------
+# GRU 
+# ---------------------
+class GRU(nn.Module):
+    def __init__(self, input_dim=1, hidden_dim=32, num_layers=2, output_dim=1):
+        super(GRU, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.num_layers = num_layers
+        
+        self.gru = nn.GRU(input_dim, hidden_dim, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x):
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_dim).requires_grad_()
+        out, (hn) = self.gru(x, (h0.detach()))
+        out = self.fc(out[:, -1, :]) 
+        return out
+
 # -----------
 # Main method
 # -----------
-def main(ticker,lookback=20,num_epochs=100):
+def main(ticker,model='LSTM',lookback=20,num_epochs=100):
     """
     Given a ticker this main method will train an LSTM on the oldest 80% of stock data predicting
     closing price, and then test the model on the latest 20% of stock data.
@@ -118,7 +136,12 @@ def main(ticker,lookback=20,num_epochs=100):
 
     x_train, y_train, x_test, y_test = split_data(price2, lookback)
 
-    model = LSTM()
+    assert model in ('LSTM','GRU'), "Please select model of type LSTM or GRU"
+    if model=='LSTM':
+        model = LSTM()
+    else:
+        model = GRU()
+
     criterion = torch.nn.MSELoss(reduction='mean')
     optimiser = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -176,7 +199,7 @@ def main(ticker,lookback=20,num_epochs=100):
         
     return d_out
 
-def plotThis(trainX,trainY,testX,testY,actualX,actualY):
+def plotThis(trainX,trainY,testX,testY,actualX,actualY,modelType="LSTM"):
     fig = go.Figure()
     fig.add_trace(go.Scatter(go.Scatter(x=trainX, y=trainY,
                         mode='lines',
@@ -221,7 +244,7 @@ def plotThis(trainX,trainY,testX,testY,actualX,actualY):
     annotations = []
     annotations.append(dict(xref='paper', yref='paper', x=0.0, y=1.05,
                                 xanchor='left', yanchor='bottom',
-                                text='Results (LSTM)',
+                                text=f'Results ({modelType})',
                                 font=dict(family='Rockwell',
                                             size=26,
                                             color='white'),

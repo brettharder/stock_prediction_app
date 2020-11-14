@@ -36,7 +36,7 @@ def get_stock_history(ticker,history='max'):
 
 #btc = get_stock_history("BTC-USD")
 btc = get_stock_history("ETH-USD")
-
+btc
 
 # -------------
 # preprocessing
