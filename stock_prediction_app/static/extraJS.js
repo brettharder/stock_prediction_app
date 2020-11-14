@@ -9,7 +9,7 @@ $("#loadingWheel").hide();
 function loadStock(e){
     e.preventDefault();
     $('#loadingWheel').show();
-    console.log("Add this!");
+    console.log("Add this!!!!");
     /*GET Name of stock to predict...
     1. USE AJAX call to send name of stock to server
     2. In python confirm if stock name is valid..
@@ -18,13 +18,16 @@ function loadStock(e){
     */
 
     var stockName= $('#stockInput').val();
-    console.log('This is the stock '+ stockName);
+    console.log('This is the stock hahaha '+ stockName);
+    var modelType= $('#modelType :selected').text();
+    console.log('This is the model type '+ modelType);
     
     $.ajax({
     url: "/getStock",
     type: "GET",
     data: {
-        'stockName': $('#stockInput').val()
+        'stockName': $('#stockInput').val(),
+        'modelType': $('#modelType').find(":selected").text()
     },
     success: function(response){
         console.log("Ayo server did it's thang");
@@ -41,7 +44,8 @@ function loadStock(e){
                 url: "/trainModel",
                 type: "GET",
                 data: {
-                    'stockName': $('#stockInput').val()
+                    'stockName': $('#stockInput').val(),
+                    'modelType': $('#modelType :selected').text()
                 },
                 success: function(response){
                     $('#loadingWheel').hide();

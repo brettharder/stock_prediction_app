@@ -35,12 +35,16 @@ def trainModel():
     if(request.method=="GET"):
         #print(request.args)
         stockName=request.args.get('stockName')
-        returnData=model.main(stockName)
+        print(stockName)
+        modelType =request.args.get('modelType')
+        print(modelType)
+        returnData=model.main(stockName,modelType)
         #print(returnData) 
         #content=returnData
         plotlyDiv=model.plotThis(returnData['train']['x'],returnData['train']['y'],
             returnData['test']['x'],returnData['test']['y'],
-            returnData['actual']['x'],returnData['actual']['y']
+            returnData['actual']['x'],returnData['actual']['y'],
+            modelType=modelType
         )       
         content['plotDiv']=plotlyDiv
     return jsonify(content)
